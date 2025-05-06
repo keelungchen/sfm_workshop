@@ -1,0 +1,105 @@
+---
+title: "NSYSU_SfM_workshop"
+author: "Yan"
+date: "2025-05-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Library
+```{r}
+library("rgl")
+library("Rvcg")
+library("habtools")
+library("raster")
+
+library(sf) # for shape file
+
+```
+
+
+```{r}
+plot3d(mcap)
+resvec <- Rvcg::vcgMeshres(mcap)[[2]] # vector of resolutions
+hist(resvec)
+mcap_uniform <- Rvcg::vcgUniformRemesh(mcap, silent = TRUE, multiSample = TRUE, voxelSize = min(resvec), mergeClost = TRUE)
+Rvcg::vcgMeshres(mcap_uniform)[[1]]
+summary(Rvcg::vcgMeshres(mcap_uniform)[[2]])
+
+# Read single meshes
+mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
+
+# Plot the mesh
+plot3d(mesh, color = "coral")
+
+
+# Get resolution of the mesh (in mm)
+vcgMeshres(mesh)[[1]]
+```
+
+```{r}
+
+```
+
+
+```{r}
+# Change resolution to 1mm
+
+
+# Clean mesh if you have errors
+
+
+# Surface area
+surface_area(mesh)
+# volume
+vcgVolume(mesh)
+
+#planar area
+planar(mesh)
+
+#Csf
+csf(mesh)
+
+```
+
+```{r}
+resvec <- Rvcg::vcgMeshres(mesh)[[2]] # vector of resolutions
+hist(resvec)
+
+mesh_uniform <- Rvcg::vcgUniformRemesh(mesh, silent = TRUE, multiSample = TRUE, voxelSize = min(resvec), mergeClost = TRUE)
+Rvcg::vcgMeshres(mesh_uniform)[[1]]
+summary(Rvcg::vcgMeshres(mesh_uniform)[[2]])
+```
+
+```{r}
+dem <- mesh_to_dem(mesh, res = 0.002, fill = FALSE)
+raster::plot(dem)
+```
+
+```{r}
+# fractal dimension
+fd(mesh, method = "cubes", plot = TRUE, diagnose = TRUE)
+```
+
+```{r}
+# rugosity
+rg(mesh)
+
+# height range 
+hr(mesh)
+```
+
+```{r}
+# Load a raster
+dem <- raster("data/goose_dem.tif")
+res(dem)
+plot(dem)
+```
+
+# 計算3D模型的各項常見指標 與珊瑚比較
+# 比較教室棲地複雜度與實際棲地複雜度
+
+
