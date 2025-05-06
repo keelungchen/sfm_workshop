@@ -3,10 +3,7 @@
 title: "habtools: Complexity Metrics for 3D Meshes 教學"
 author: "Guan-Yan Chen"
 date: "`r Sys.Date()`"
-output:
-github\_document:
-toc: true
-toc\_depth: 2
+output: github_document
 ---
 
 # 簡介 / Introduction
