@@ -39,7 +39,9 @@ Before calculating any metrics, visualize the mesh and ensure the z orientation 
 ```{r check-mesh, echo=TRUE}
 # 繪製互動式 3D 模型 / Plot interactive 3D model
 plot3d(mesh)
-
+# 快照並插入 / Snapshot and include image
+rgl::snapshot3d("mesh.png")
+knitr::include_graphics("mesh.png")
 ```
 
 ## 解析度分佈 / Resolution Distribution
@@ -48,9 +50,6 @@ plot3d(mesh)
 在處理三維網格資料時，各頂點之間的間距（解析度）往往不一致。如果不先確認和調整解析度分佈，後續的指標計算（例如分形維度和 Rugosity）可能會因解析度差異而產生偏差。此外，解析度分佈也有助於選擇適當的 voxelSize 參數以進行均勻重網格。
 **Why this step?**
 Meshes often have variable vertex spacing. Inspecting the distribution of distances between adjacent vertices ensures that subsequent metric calculations (e.g., fractal dimension and rugosity) are not biased by uneven resolution. It also informs an appropriate choice of `voxelSize` for uniform remeshing.
-
-**中文說明**：計算網格中相鄰頂點間距並繪製直方圖以檢查解析度變異。
-**English Explanation**: Compute distances between adjacent vertices in the mesh and plot a histogram to inspect variation in resolution.
 
 **中文說明**：計算網格中相鄰頂點間距並繪製直方圖以檢查解析度變異。
 **English Explanation**: Compute distances between adjacent vertices in the mesh and plot a histogram to inspect variation in resolution.
@@ -104,10 +103,10 @@ fd_result <- fd(
 fd_result$D
 ```
 
-### Rugosity 及高度範圍 / Rugosity and Height Range
+### 表面粗糙度及高度範圍 / Rugosity and Height Range
 
 ```{r rugosity-height, echo=TRUE}
-# Rugosity 計算 / Compute rugosity
+# 粗糙度計算 / Compute rugosity
 rugosity_value <- rg(mesh_uniform)
 print(rugosity_value)
 

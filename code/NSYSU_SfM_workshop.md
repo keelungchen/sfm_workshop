@@ -24,7 +24,18 @@ is correct.
 ``` r
 # 繪製互動式 3D 模型 / Plot interactive 3D model
 plot3d(mesh)
+# 快照並插入 / Snapshot and include image
+rgl::snapshot3d("mesh.png")
 ```
+
+    ## Warning in rgl::snapshot3d("mesh.png"): webshot = TRUE requires the webshot2
+    ## package and Chrome browser; using rgl.snapshot() instead
+
+``` r
+knitr::include_graphics("mesh.png")
+```
+
+![](mesh.png)<!-- -->
 
 ## 解析度分佈 / Resolution Distribution
 
@@ -37,10 +48,6 @@ between adjacent vertices ensures that subsequent metric calculations
 (e.g., fractal dimension and rugosity) are not biased by uneven
 resolution. It also informs an appropriate choice of `voxelSize` for
 uniform remeshing.
-
-**中文說明**：計算網格中相鄰頂點間距並繪製直方圖以檢查解析度變異。
-**English Explanation**: Compute distances between adjacent vertices in
-the mesh and plot a histogram to inspect variation in resolution.
 
 **中文說明**：計算網格中相鄰頂點間距並繪製直方圖以檢查解析度變異。
 **English Explanation**: Compute distances between adjacent vertices in
@@ -125,10 +132,10 @@ fd_result$D
 
     ## [1] 2.135587
 
-### Rugosity 及高度範圍 / Rugosity and Height Range
+### 表面粗糙度及高度範圍 / Rugosity and Height Range
 
 ``` r
-# Rugosity 計算 / Compute rugosity
+# 粗糙度計算 / Compute rugosity
 rugosity_value <- rg(mesh_uniform)
 ```
 
