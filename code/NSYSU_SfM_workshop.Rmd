@@ -74,12 +74,12 @@ If the resolution histogram is very broad (e.g. long tail or multimodal), indica
 
 ```{r remesh, echo=TRUE, error = TRUE}
 # 均勻重網格 / Uniformly remesh mesh
-mcap_uniform <- Rvcg::vcgUniformRemesh(mesh, silent = TRUE, multiSample = TRUE, voxelSize = median(resvec), mergeClost = TRUE)
+mesh_uniform <- Rvcg::vcgUniformRemesh(mesh, silent = TRUE, multiSample = TRUE, voxelSize = median(resvec), mergeClost = TRUE)
 
-Rvcg::vcgMeshres(mcap_uniform)[[1]]
+Rvcg::vcgMeshres(mesh_uniform)[[1]]
 
 # 驗證重網格後解析度 / Check resolution of the remeshed object
-new_res <- vcgMeshres(mcap_uniform)[[2]]
+new_res <- vcgMeshres(mesh_uniform)[[2]]
 hist(new_res, main = "Resolution Distribution", xlab = "Distance between vertices")
 summary(new_res)
 ```
@@ -129,8 +129,43 @@ print(surface_area_value)
 
 ## 形狀指標 / Shape Metrics
 
-**中文說明**：計算多種描述物體形狀的指標。
-**English Explanation**: Compute various metrics that describe the shape of the object.
+**指標定義與生態意義 / Definitions and Ecological Significance**
+
+* **Convexity（凸度）**
+
+  * **定義 / Definition**：mesh 表面積與其 convex hull 表面積之比；值越接近 1 表示形狀越凸。
+  * **生態意義 / Ecological Significance**：低凸度（更多凹陷）提供微棲位與附著點，增加物種豐富度與遮蔽；高凸度則在強流或侵蝕環境下更具結構穩定性。
+  * **English**: Convexity is the ratio of the mesh surface area to the surface area of its convex hull; values close to 1 indicate a more convex shape. Low convexity reflects more indentations and niches, enhancing microhabitats and species diversity, while high convexity confers greater structural stability in high-flow or erosive conditions.
+
+* **Packing（包裝度）**
+
+  * **定義 / Definition**：mesh 體積與其 convex hull 體積之比；介於 0 到 1，越高表示結構越密實。
+  * **生態意義 / Ecological Significance**：高包裝度降低水流穿透與養分交換，但增加機械強度；低包裝度則有利於養分與光線滲透。
+  * **English**: Packing is the ratio of the mesh volume to the volume of its convex hull, ranging from 0 to 1; higher values indicate a more compact structure. High packing density restricts fluid flow and nutrient exchange but enhances mechanical strength, while lower packing facilitates nutrient and light penetration.
+
+* **Sphericity（球形度）**
+
+  * **定義 / Definition**：Ψ = (π^(1/3)\*(6V)^(2/3)) / A，其中 V 為體積，A 為表面積；完全球體時 Ψ=1。
+  * **生態意義 / Ecological Significance**：高球形度降低表面積對體積比率，減少擴散損失；低球形度（如扁平或分枝形態）增大表面積，有利於光合作用與養分吸收，但在強流中易受損。
+  * **English**: Sphericity measures how closely an object’s shape approaches that of a perfect sphere, calculated as Ψ = (π^(1/3)\*(6V)^(2/3)) / A. A value of 1 denotes a perfect sphere. Higher sphericity minimizes surface area relative to volume, reducing diffusive loss, whereas lower sphericity increases surface area beneficial for photosynthesis and nutrient uptake but may be more vulnerable in high-flow environments.
+
+* **SMA（面積二階矩）**
+
+  * **定義 / Definition**：SMA = ∬ r^2 dA，其中 r 為表面元素到重心的距離。
+  * **生態意義 / Ecological Significance**：反映結構對扭轉或剪切力的抗性；SMA 越大表示表面質量分布更分散，影響流體動力穩定性。
+  * **English**: Second Moment of Area (SMA) is defined as SMA = ∬ r^2 dA, where r is the distance from surface elements to the centroid. It reflects resistance to torsional or shear forces; higher SMA indicates more distributed surface mass, affecting hydrodynamic stability.
+
+* **SMV（體積二階矩）**
+
+  * **定義 / Definition**：SMV = ∭ r^2 dV，其中 r 為體積元素到重心的距離。
+  * **生態意義 / Ecological Significance**：度量質量分布對整體穩定性的影響；SMV 越大表示質量分布更分散，可能更能抵抗翻覆。
+  * **English**: Second Moment of Volume (SMV) is defined as SMV = ∭ r^2 dV, where r is the distance from volume elements to the centroid. It quantifies how mass distribution influences overall stability; a higher SMV indicates more dispersed mass distribution, potentially resisting overturning under dynamic forces.
+
+* **CSF（機械形狀因子）**
+
+  * **定義 / Definition**：結合表面積與曲率以度量對機械應力的敏感性，具體公式依實作而異。
+  * **生態意義 / Ecological Significance**：高 CSF 表示應力集中，易因撞擊或剪切而斷裂；低 CSF 則能分散應力，更耐受機械擾動。
+  * **English**: Mechanical Shape Factor (CSF) integrates surface area and curvature to uniformly measure sensitivity to mechanical stress; exact formula depends on implementation. Higher CSF indicates stress concentration and susceptibility to fracture, while lower CSF disperses stress, enhancing resistance to mechanical disturbances.
 
 ```{r shape-metrics, echo=TRUE}
 convexity_val <- convexity(mesh)

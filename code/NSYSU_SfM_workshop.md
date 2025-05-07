@@ -26,7 +26,7 @@ library(Rvcg)
 mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
 ```
 
-    ## Removed 2 duplicate 3168 unreferenced vertices and 6 duplicate faces
+    ## Removed 3 duplicate 1 unreferenced vertices and 0 duplicate faces
 
 ## 檢查網格 / Checking the Mesh
 
@@ -75,9 +75,9 @@ summary(resvec)
 ```
 
     ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
-    ## 1.857e-06 1.258e-03 1.505e-03 1.703e-03 1.858e-03 4.430e-02
+    ## 4.684e-06 1.187e-03 1.407e-03 1.528e-03 1.700e-03 8.666e-02
 
-\$1 **何時需要均勻重網格？**
+**何時需要均勻重網格？**
 當解析度分佈非常寬（例如直方圖有長尾或多峰），表示網格上有極大或極小的頂點間距，這會影響後續的複雜度指標計算。此時建議進行均勻重網格，以獲得一致的解析度。相反地，如果直方圖大部分值集中在單一窄範圍，分佈均勻，則無需重新網格。
 **When to remesh?** If the resolution histogram is very broad (e.g. long
 tail or multimodal), indicating some vertex distances are much larger or
@@ -87,32 +87,224 @@ narrow range, the mesh is already uniform and no remeshing is needed.
 
 ``` r
 # 均勻重網格 / Uniformly remesh mesh
-mcap_uniform <- Rvcg::vcgUniformRemesh(mesh, silent = TRUE, multiSample = TRUE, voxelSize = min(resvec), mergeClost = TRUE)
+mesh_uniform <- Rvcg::vcgUniformRemesh(mesh, silent = TRUE, multiSample = TRUE, voxelSize = median(resvec), mergeClost = TRUE)
+
+Rvcg::vcgMeshres(mesh_uniform)[[1]]
 ```
 
-    ## Error: vector::_M_default_append
-
-``` r
-Rvcg::vcgMeshres(mcap_uniform)[[1]]
-```
-
-    ## Error: object 'mcap_uniform' not found
+    ## [1] 0.001420853
 
 ``` r
 # 驗證重網格後解析度 / Check resolution of the remeshed object
-new_res <- vcgMeshres(mcap_uniform)[[2]]
-```
-
-    ## Error: object 'mcap_uniform' not found
-
-``` r
+new_res <- vcgMeshres(mesh_uniform)[[2]]
 hist(new_res, main = "Resolution Distribution", xlab = "Distance between vertices")
 ```
 
-    ## Error: object 'new_res' not found
+![](NSYSU_SfM_workshop_files/figure-gfm/remesh-1.png)<!-- -->
 
 ``` r
 summary(new_res)
 ```
 
-    ## Error: object 'new_res' not found
+    ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+    ## 0.0003464 0.0011435 0.0014429 0.0014209 0.0017290 0.0028366
+
+## 複雜度指標：Rugosity (R), Fractal Dimension (D), Height Range (H)
+
+### 分形維度 / Fractal Dimension
+
+**中文說明**：使用 `cubes` 方法計算 mesh 的分形維度。 **English
+Explanation**: Compute the fractal dimension of the mesh using the
+`cubes` method.
+
+``` r
+# 分形維度計算 / Calculate fractal dimension
+fd_result <- fd(
+  mesh_uniform,
+  method = "cubes",
+  plot = TRUE,
+  diagnose = TRUE
+)
+```
+
+    ## lvec is set to c(0.002, 0.004, 0.008, 0.017, 0.033, 0.066, 0.133, 0.265).
+
+![](NSYSU_SfM_workshop_files/figure-gfm/fractal-dimension-1.png)<!-- -->![](NSYSU_SfM_workshop_files/figure-gfm/fractal-dimension-2.png)<!-- -->
+
+``` r
+# 提取 D 值 / Extract fractal dimension
+fd_result$D
+```
+
+    ## [1] 2.135587
+
+### Rugosity 及高度範圍 / Rugosity and Height Range
+
+``` r
+# Rugosity 計算 / Compute rugosity
+rugosity_value <- rg(mesh_uniform)
+```
+
+    ## L0 is set to mesh resolution (0.00142085256201945)
+
+``` r
+print(rugosity_value)
+```
+
+    ## [1] 4.239207
+
+``` r
+# 計算高度範圍 / Compute height range
+height_range <- hr(mesh_uniform)
+print(height_range)
+```
+
+    ## [1] 0.2637615
+
+## 平面與表面積 / Planar and Surface Area
+
+``` r
+# 平面表面積 / Planar surface area
+planar_area <- planar(mesh)
+```
+
+    ## L0 is set to mesh resolution (0.00152754054666314)
+
+``` r
+print(planar_area)
+```
+
+    ## [1] 0.03242759
+
+``` r
+# 總表面積 / Total surface area
+surface_area_value <- surface_area(mesh)
+print(surface_area_value)
+```
+
+    ## [1] 0.1404026
+
+## 形狀指標 / Shape Metrics
+
+**指標定義與生態意義 / Definitions and Ecological Significance**
+
+- **Convexity（凸度）**
+
+  - **定義 / Definition**：mesh 表面積與其 convex hull
+    表面積之比；值越接近 1 表示形狀越凸。
+  - **生態意義 / Ecological
+    Significance**：低凸度（更多凹陷）提供微棲位與附著點，增加物種豐富度與遮蔽；高凸度則在強流或侵蝕環境下更具結構穩定性。
+  - **English**: Convexity is the ratio of the mesh surface area to the
+    surface area of its convex hull; values close to 1 indicate a more
+    convex shape. Low convexity reflects more indentations and niches,
+    enhancing microhabitats and species diversity, while high convexity
+    confers greater structural stability in high-flow or erosive
+    conditions.
+
+- **Packing（包裝度）**
+
+  - **定義 / Definition**：mesh 體積與其 convex hull 體積之比；介於 0 到
+    1，越高表示結構越密實。
+  - **生態意義 / Ecological
+    Significance**：高包裝度降低水流穿透與養分交換，但增加機械強度；低包裝度則有利於養分與光線滲透。
+  - **English**: Packing is the ratio of the mesh volume to the volume
+    of its convex hull, ranging from 0 to 1; higher values indicate a
+    more compact structure. High packing density restricts fluid flow
+    and nutrient exchange but enhances mechanical strength, while lower
+    packing facilitates nutrient and light penetration.
+
+- **Sphericity（球形度）**
+
+  - **定義 / Definition**：Ψ = (π<sup>(1/3)\*(6V)</sup>(2/3)) / A，其中
+    V 為體積，A 為表面積；完全球體時 Ψ=1。
+  - **生態意義 / Ecological
+    Significance**：高球形度降低表面積對體積比率，減少擴散損失；低球形度（如扁平或分枝形態）增大表面積，有利於光合作用與養分吸收，但在強流中易受損。
+  - **English**: Sphericity measures how closely an object’s shape
+    approaches that of a perfect sphere, calculated as Ψ =
+    (π<sup>(1/3)\*(6V)</sup>(2/3)) / A. A value of 1 denotes a perfect
+    sphere. Higher sphericity minimizes surface area relative to volume,
+    reducing diffusive loss, whereas lower sphericity increases surface
+    area beneficial for photosynthesis and nutrient uptake but may be
+    more vulnerable in high-flow environments.
+
+- **SMA（面積二階矩）**
+
+  - **定義 / Definition**：SMA = ∬ r^2 dA，其中 r
+    為表面元素到重心的距離。
+  - **生態意義 / Ecological
+    Significance**：反映結構對扭轉或剪切力的抗性；SMA
+    越大表示表面質量分布更分散，影響流體動力穩定性。
+  - **English**: Second Moment of Area (SMA) is defined as SMA = ∬ r^2
+    dA, where r is the distance from surface elements to the centroid.
+    It reflects resistance to torsional or shear forces; higher SMA
+    indicates more distributed surface mass, affecting hydrodynamic
+    stability.
+
+- **SMV（體積二階矩）**
+
+  - **定義 / Definition**：SMV = ∭ r^2 dV，其中 r
+    為體積元素到重心的距離。
+  - **生態意義 / Ecological
+    Significance**：度量質量分布對整體穩定性的影響；SMV
+    越大表示質量分布更分散，可能更能抵抗翻覆。
+  - **English**: Second Moment of Volume (SMV) is defined as SMV = ∭ r^2
+    dV, where r is the distance from volume elements to the centroid. It
+    quantifies how mass distribution influences overall stability; a
+    higher SMV indicates more dispersed mass distribution, potentially
+    resisting overturning under dynamic forces.
+
+- **CSF（機械形狀因子）**
+
+  - **定義 /
+    Definition**：結合表面積與曲率以度量對機械應力的敏感性，具體公式依實作而異。
+  - **生態意義 / Ecological Significance**：高 CSF
+    表示應力集中，易因撞擊或剪切而斷裂；低 CSF
+    則能分散應力，更耐受機械擾動。
+  - **English**: Mechanical Shape Factor (CSF) integrates surface area
+    and curvature to uniformly measure sensitivity to mechanical stress;
+    exact formula depends on implementation. Higher CSF indicates stress
+    concentration and susceptibility to fracture, while lower CSF
+    disperses stress, enhancing resistance to mechanical disturbances.
+
+``` r
+convexity_val <- convexity(mesh)
+packing_val  <- packing(mesh)
+sphericity_val <- sphericity(mesh)
+sma_val <- sma(mesh)
+smv_val <- smv(mesh)
+csf_val <- csf(mesh)
+```
+
+    ## z_min set to -0.609558761119843
+
+    ## resolution set to 0.00152754054666314
+
+``` r
+# 顯示結果 / Print results
+list(
+  convexity = convexity_val,
+  packing = packing_val,
+  sphericity = sphericity_val,
+  second_moment_area = sma_val,
+  second_moment_volume = smv_val,
+  mechanical_shape_factor = csf_val
+)
+```
+
+    ## $convexity
+    ## [1] 0.7513123
+    ## 
+    ## $packing
+    ## [1] 0.9912097
+    ## 
+    ## $sphericity
+    ## [1] 0.6933963
+    ## 
+    ## $second_moment_area
+    ## [1] 0.01319239
+    ## 
+    ## $second_moment_volume
+    ## [1] 0.0001715002
+    ## 
+    ## $mechanical_shape_factor
+    ## [1] 3235.181
