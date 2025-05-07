@@ -21,40 +21,7 @@ packages and import the example mesh from `data/Goose_S1_cleaned.ply`.
 calculating any metrics, visualize the mesh and ensure the z orientation
 is correct.
 
-``` r
-# 開啟 headless 裝置 / Open headless RGL device
-rgl::open3d(useNULL = TRUE)
-```
-
-    ## null 
-    ##    1
-
-``` r
-# 繪製 3D 網格 / Plot 3D mesh
-plot3d(mesh)
-
-# 將快照儲存到 data 資料夾 / Save snapshot to data/mesh.png
-rgl::snapshot3d(filename = "data/mesh.png")
-```
-
-    ## Warning in rgl::snapshot3d(filename = "data/mesh.png"): webshot = TRUE requires
-    ## the webshot2 package and Chrome browser; using rgl.snapshot() instead
-
-``` r
-# 插入快照 / Include snapshot in document
-knitr::include_graphics("data/mesh.png")
-```
-
-![](data/mesh.png)<!-- -->
-
-``` r
-# 關閉 RGL 裝置 / Close RGL device
-rgl::rgl.close()
-```
-
-    ## Warning in rgl::rgl.close(): 'rgl::rgl.close' is deprecated.
-    ## Use 'close3d' instead.
-    ## See help("Deprecated")
+![](data/mesh.png)
 
 ## 解析度分佈 / Resolution Distribution
 

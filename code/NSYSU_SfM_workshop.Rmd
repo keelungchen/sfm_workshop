@@ -6,15 +6,8 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-# 設定 knit 根目錄 / Set knit root dir to project root
-try({
-  library(rprojroot)
-  knitr::opts_knit$set(root.dir = find_rstudio_root_file())
-}, silent = TRUE)
-
-# 啟用 headless rgl / Enable headless rgl
-Sys.setenv(RGL_USE_NULL = "TRUE")
-knitr::opts_chunk$set(rgl.useNULL = TRUE)
+# 將 knit 的工作目錄固定為專案根目錄
+knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```
 
 # 簡介 / Introduction
@@ -43,22 +36,11 @@ mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
 在計算任何指標前，先視覺化網格並檢查 z 軸方向是否正確。
 Before calculating any metrics, visualize the mesh and ensure the z orientation is correct.
 
-```{r check-mesh}
-# 開啟 headless 裝置 / Open headless RGL device
-rgl::open3d(useNULL = TRUE)
-
+```{r check-mesh, echo=FALSE}
 # 繪製 3D 網格 / Plot 3D mesh
 plot3d(mesh)
-
-# 將快照儲存到 data 資料夾 / Save snapshot to data/mesh.png
-rgl::snapshot3d(filename = "data/mesh.png")
-
-# 插入快照 / Include snapshot in document
-knitr::include_graphics("data/mesh.png")
-
-# 關閉 RGL 裝置 / Close RGL device
-rgl::rgl.close()
 ```
+![](data/mesh.png)
 
 ## 解析度分佈 / Resolution Distribution
 
