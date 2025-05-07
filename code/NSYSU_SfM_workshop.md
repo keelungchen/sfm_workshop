@@ -26,7 +26,10 @@ is correct.
 plot3d(mesh)
 ```
 
-![](data/mesh.png)<!-- -->
+<figure>
+<img src="../data/mesh.png" alt="Fig0" />
+<figcaption aria-hidden="true">Fig0</figcaption>
+</figure>
 
 ## 解析度分佈 / Resolution Distribution
 

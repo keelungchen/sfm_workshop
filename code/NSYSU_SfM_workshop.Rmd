@@ -40,7 +40,7 @@ Before calculating any metrics, visualize the mesh and ensure the z orientation 
 # 繪製 3D 網格 / Plot 3D mesh
 plot3d(mesh)
 ```
-![](data/mesh.png)<!-- -->
+![Fig0](../data/mesh.png)
 
 ## 解析度分佈 / Resolution Distribution
 
