@@ -3,8 +3,16 @@
 title: "habtools: Complexity Metrics for 3D Meshes 教學"
 author: "Guan-Yan Chen"
 date: "`r Sys.Date()`"
-output: github_document
+output: github\_document
 ---
+
+```{r setup-root, include=FALSE}
+# 設定 knit 的工作目錄為專案根目錄 / Set knit root dir to project root
+try({
+  library(rprojroot)
+  knitr::opts_knit$set(root.dir = find_rstudio_root_file())
+}, silent = TRUE)
+```
 
 # 簡介 / Introduction
 
@@ -13,69 +21,50 @@ This tutorial demonstrates how to compute complexity metrics for 3D meshes using
 
 ## 前置作業與資料載入 / Setup and Data Loading
 
-**中文說明**：載入必要的套件並載入範例網格資料 `mcap`。
-**English Explanation**: Load the required packages and the example mesh data `mcap`.
+**中文說明**：載入必要的套件並從 `data/Goose_S1_cleaned.ply` 範例檔案載入網格資料。
+**English Explanation**: Load the required packages and import the example mesh from `data/Goose_S1_cleaned.ply`.
 
 ```{r setup, echo=TRUE}
 # 載入套件 / Load packages
 library(habtools)
 library(rgl)
+library(Rvcg)
 options(rgl.printRglwidget = TRUE)
 
-# 載入範例網格資料 / Load example mesh data
-# `mcap` 範例資料包含在 habtools 套件中
-data("mcap", package = "habtools")
+# 載入範例網格資料 / Load example mesh
+# 請確保檔案在專案的 data 資料夾中
+mesh <- vcgImport("data/Goose_S1_cleaned.ply")
 ```
 
-## 檢查網格 / Checking your mesh
+## 檢查網格 / Checking the Mesh
 
 在計算任何指標前，先視覺化網格並檢查 z 軸方向是否正確。
 Before calculating any metrics, visualize the mesh and ensure the z orientation is correct.
 
 ```{r check-mesh, echo=TRUE}
 # 顯示三維網格視覺化 / Visualize the 3D mesh
-plot3d(mcap)
-```
-
-## 使用自己的資料 / Using your own data
-
-**中文說明**：請將下列程式碼段替換為您的網格資料路徑或讀取方式。
-**English Explanation**: Replace the code below with your own mesh data path or loading method.
-
-```{r your-data, echo=TRUE}
-# 載入必要套件 / Load necessary packages
-library(habtools)
-library(rgl)
-
-# 載入您的網格資料 / Load your own mesh data
-# 例如，如果您的資料是 OBJ 格式：
-# mesh <- Rvcg::vcgImport("path/to/your_mesh.obj")
-# 或者 PLY 格式：
-# mesh <- Rvcg::vcgImport("path/to/your_mesh.ply")
-
-# 確認網格 / Check mesh
 plot3d(mesh)
-
-# 計算並顯示 Rugosity / Compute and display rugosity
-rug_value <- rg(mesh)
-print(rug_value)
-
-# 其他指標 / Other metrics
-# fd_result <- fd(mesh, method = "cubes", plot = TRUE, diagnose = TRUE)
-# print(fd_result$D)
 ```
 
 ## 解析度分佈 / Resolution Distribution
+
+**為何需要此步驟？**
+在處理三維網格資料時，各頂點之間的間距（解析度）往往不一致。如果不先確認和調整解析度分佈，後續的指標計算（例如分形維度和 Rugosity）可能會因解析度差異而產生偏差。此外，解析度分佈也有助於選擇適當的 voxelSize 參數以進行均勻重網格。
+**Why this step?**
+Meshes often have variable vertex spacing. Inspecting the distribution of distances between adjacent vertices ensures that subsequent metric calculations (e.g., fractal dimension and rugosity) are not biased by uneven resolution. It also informs an appropriate choice of `voxelSize` for uniform remeshing.
+
+**中文說明**：計算網格中相鄰頂點間距並繪製直方圖以檢查解析度變異。
+**English Explanation**: Compute distances between adjacent vertices in the mesh and plot a histogram to inspect variation in resolution.
 
 **中文說明**：計算網格中相鄰頂點間距並繪製直方圖以檢查解析度變異。
 **English Explanation**: Compute distances between adjacent vertices in the mesh and plot a histogram to inspect variation in resolution.
 
 ```{r resolution-histogram, echo=TRUE}
 # 計算解析度向量 / Calculate vector of resolutions
-resvec <- Rvcg::vcgMeshres(mcap)[[2]]
+resvec <- vcgMeshres(mesh)[[2]]
 
 # 繪製直方圖 / Plot histogram of resolutions
-hist(resvec)
+hist(resvec, main = "Resolution Distribution", xlab = "Distance between vertices")
 ```
 
 ```{r resolution-summary, echo=TRUE}
@@ -83,15 +72,16 @@ hist(resvec)
 summary(resvec)
 ```
 
-## 均勻重網格 / Uniform Remeshing
-
-**中文說明**：使用最小解析度作為 voxelSize 重新均勻網格，以減少點間距差異。
-**English Explanation**: Uniformly remesh using the minimum resolution as `voxelSize` to reduce variation in vertex spacing.
+\$1
+**何時需要均勻重網格？**
+當解析度分佈非常寬（例如直方圖有長尾或多峰），表示網格上有極大或極小的頂點間距，這會影響後續的複雜度指標計算。此時建議進行均勻重網格，以獲得一致的解析度。相反地，如果直方圖大部分值集中在單一窄範圍，分佈均勻，則無需重新網格。
+**When to remesh?**
+If the resolution histogram is very broad (e.g. long tail or multimodal), indicating some vertex distances are much larger or smaller than others, remeshing is recommended to achieve uniform resolution. Conversely, if most values cluster tightly in a single narrow range, the mesh is already uniform and no remeshing is needed.
 
 ```{r remesh, echo=TRUE}
 # 均勻重網格 / Uniformly remesh mesh
-mcap_uniform <- Rvcg::vcgUniformRemesh(
-  mcap,
+mesh_uniform <- vcgUniformRemesh(
+  mesh,
   silent = TRUE,
   multiSample = TRUE,
   voxelSize = min(resvec),
@@ -99,11 +89,11 @@ mcap_uniform <- Rvcg::vcgUniformRemesh(
 )
 
 # 驗證重網格後解析度 / Check resolution of the remeshed object
-Rvcg::vcgMeshres(mcap_uniform)[[1]]  
-summary(Rvcg::vcgMeshres(mcap_uniform)[[2]])
+new_res <- vcgMeshres(mesh_uniform)[[2]]
+summary(new_res)
 ```
 
-## 複雜度指標：R, D, 和 H / Complexity metrics: R, D, and H
+## 複雜度指標：Rugosity (R), Fractal Dimension (D), Height Range (H)
 
 ### 分形維度 / Fractal Dimension
 
@@ -113,7 +103,7 @@ summary(Rvcg::vcgMeshres(mcap_uniform)[[2]])
 ```{r fractal-dimension, echo=TRUE, fig.height=4}
 # 分形維度計算 / Calculate fractal dimension
 fd_result <- fd(
-  mcap_uniform,
+  mesh_uniform,
   method = "cubes",
   plot = TRUE,
   diagnose = TRUE
@@ -126,20 +116,24 @@ fd_result$D
 
 ```{r rugosity-height, echo=TRUE}
 # Rugosity 計算 / Compute rugosity
-rg(mcap_uniform)
+rugosity_value <- rg(mesh_uniform)
+print(rugosity_value)
 
 # 計算高度範圍 / Compute height range
-hr(mcap_uniform)
+height_range <- hr(mesh_uniform)
+print(height_range)
 ```
 
-### 平面與表面積 / Planar and Surface Area
+## 平面與表面積 / Planar and Surface Area
 
 ```{r area-metrics, echo=TRUE}
 # 平面表面積 / Planar surface area
-planar(mcap)
+planar_area <- planar(mesh)
+print(planar_area)
 
 # 總表面積 / Total surface area
-surface_area(mcap)
+surface_area_value <- surface_area(mesh)
+print(surface_area_value)
 ```
 
 ## 形狀指標 / Shape Metrics
@@ -148,42 +142,146 @@ surface_area(mcap)
 **English Explanation**: Compute various metrics that describe the shape of the object.
 
 ```{r shape-metrics, echo=TRUE}
-convexity(mcap)    # 凸度 / Convexity
-packing(mcap)      # 打包度 / Packing
-sphericity(mcap)   # 球形度 / Sphericity
-sma(mcap)          # 面積二階矩 / Second moment of area
-smv(mcap)          # 體積二階矩 / Second moment of volume
-csf(mcap)          # 機械形狀因子 / Mechanical shape factor
+convexity_val <- convexity(mesh)
+packing_val  <- packing(mesh)
+sphericity_val <- sphericity(mesh)
+sma_val <- sma(mesh)
+smv_val <- smv(mesh)
+csf_val <- csf(mesh)
+
+# 顯示結果 / Print results
+list(
+  convexity = convexity_val,
+  packing = packing_val,
+  sphericity = sphericity_val,
+  second_moment_area = sma_val,
+  second_moment_volume = smv_val,
+  mechanical_shape_factor = csf_val
+)
 ```
 
 ## 轉換為 DEM 或 2D 形狀 / Transform mesh into a DEM or 2D shape
 
 ```{r mesh-to-dem, echo=TRUE}
 # 轉換為數字高程模型 / Convert mesh to DEM
-dem <- mesh_to_dem(mcap_uniform, res = 0.002, fill = FALSE)
+dem <- mesh_to_dem(mesh_uniform, res = 0.002, fill = FALSE)
 # 繪製 DEM / Plot DEM
 raster::plot(dem)
 
 # 在 DEM 上計算 Rugosity (area 方法) / Compute rugosity on DEM
-rg(dem, method = "area")
+dem_rugosity <- rg(dem, method = "area")
+print(dem_rugosity)
 ```
 
 ```{r mesh-to-2d, echo=TRUE}
 # 轉換為 2D 點集 / Convert mesh to 2D points
-pts <- mesh_to_2d(mcap_uniform)
-plot(pts, asp = 1)
+pts <- mesh_to_2d(mesh_uniform)
+plot(pts, asp = 1, main = "2D Projection of Mesh")
 
 # 周長計算 / Compute perimeter
-perimeter(pts)
-
+perim_val <- perimeter(pts)
 # 圓形度計算 / Compute circularity
-circularity(pts)
+circ_val <- circularity(pts)
 
 # 2D 分形維度 (boxes 方法) / Compute fractal dimension in 2D
-fd(pts, method = "boxes", keep_data = FALSE, plot = TRUE)
+fd2d <- fd(pts, method = "boxes", keep_data = FALSE, plot = TRUE)
+
+# 顯示結果 / Print results
+list(
+  perimeter = perim_val,
+  circularity = circ_val,
+  fractal_dimension_2d = fd2d$D
+)
 ```
 
 ## 參考文獻 / References
 
 * Zawada KJA, Dornelas M, Madin JS (2019) Quantifying coral morphology. *Coral Reefs*, **38**:1281–1292.
 * Madin JS & Connolly SR (2006) Ecological consequences of major hydrodynamic disturbances on coral reefs. *Nature*, **444**:477–480.
+
+
+
+
+
+```{r}
+plot3d(mcap)
+resvec <- Rvcg::vcgMeshres(mcap)[[2]] # vector of resolutions
+hist(resvec)
+mcap_uniform <- Rvcg::vcgUniformRemesh(mcap, silent = TRUE, multiSample = TRUE, voxelSize = min(resvec), mergeClost = TRUE)
+Rvcg::vcgMeshres(mcap_uniform)[[1]]
+summary(Rvcg::vcgMeshres(mcap_uniform)[[2]])
+
+# Read single meshes
+mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
+
+# Plot the mesh
+plot3d(mesh, color = "coral")
+
+
+# Get resolution of the mesh (in mm)
+vcgMeshres(mesh)[[1]]
+```
+
+```{r}
+
+```
+
+
+```{r}
+# Change resolution to 1mm
+
+
+# Clean mesh if you have errors
+
+
+# Surface area
+surface_area(mesh)
+# volume
+vcgVolume(mesh)
+
+#planar area
+planar(mesh)
+
+#Csf
+csf(mesh)
+
+```
+
+```{r}
+resvec <- Rvcg::vcgMeshres(mesh)[[2]] # vector of resolutions
+hist(resvec)
+
+mesh_uniform <- Rvcg::vcgUniformRemesh(mesh, silent = TRUE, multiSample = TRUE, voxelSize = min(resvec), mergeClost = TRUE)
+Rvcg::vcgMeshres(mesh_uniform)[[1]]
+summary(Rvcg::vcgMeshres(mesh_uniform)[[2]])
+```
+
+```{r}
+dem <- mesh_to_dem(mesh, res = 0.002, fill = FALSE)
+raster::plot(dem)
+```
+
+```{r}
+# fractal dimension
+fd(mesh, method = "cubes", plot = TRUE, diagnose = TRUE)
+```
+
+```{r}
+# rugosity
+rg(mesh)
+
+# height range 
+hr(mesh)
+```
+
+```{r}
+# Load a raster
+dem <- raster("data/goose_dem.tif")
+res(dem)
+plot(dem)
+```
+
+# 計算3D模型的各項常見指標 與珊瑚比較
+# 比較教室棲地複雜度與實際棲地複雜度
+
+
