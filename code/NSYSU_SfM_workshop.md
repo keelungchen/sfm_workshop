@@ -110,6 +110,34 @@ summary(new_res)
     ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
     ## 0.0003464 0.0011435 0.0014429 0.0014209 0.0017290 0.0028366
 
+## 體積與表面積 / Volume and Surface Area
+
+**中文說明**：計算 mesh 的體積與總表面積。  
+**English Explanation**: Compute the mesh’s volume and total surface
+area.
+
+``` r
+# 計算 mesh 體積 / Compute mesh volume
+# 需要 Rvcg 套件的 vcgVolume() 函式
+mesh_volume  <- Rvcg::vcgVolume(mesh)
+
+# 計算 mesh 表面積 / Compute mesh surface area
+# habtools 提供 surface_area() 函式
+mesh_surface <- surface_area(mesh)
+
+# 將結果組成清單一併顯示 / Return both metrics
+list(
+  volume       = mesh_volume,
+  surface_area = mesh_surface
+)
+```
+
+    ## $volume
+    ## [1] 0.002856333
+    ## 
+    ## $surface_area
+    ## [1] 0.1404026
+
 ## 複雜度指標：Rugosity (R), Fractal Dimension (D), Height Range (H)
 
 ### 分形維度 / Fractal Dimension
