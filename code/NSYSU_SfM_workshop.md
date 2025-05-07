@@ -15,6 +15,19 @@ meshes using the `habtools` package.
 範例檔案載入網格資料。 **English Explanation**: Load the required
 packages and import the example mesh from `data/Goose_S1_cleaned.ply`.
 
+``` r
+# 載入套件 / Load packages
+library(habtools)
+library(rgl)
+library(Rvcg)
+
+# 載入範例網格資料 / Load example mesh
+# 請確保檔案在專案的 data 資料夾中
+mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
+```
+
+    ## Removed 3 duplicate 1 unreferenced vertices and 0 duplicate faces
+
 ## 檢查網格 / Checking the Mesh
 
 在計算任何指標前，先視覺化網格並檢查 z 軸方向是否正確。 Before

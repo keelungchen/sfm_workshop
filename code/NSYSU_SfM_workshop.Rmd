@@ -19,7 +19,7 @@ This tutorial demonstrates how to compute complexity metrics for 3D meshes using
 
 **中文說明**：載入必要的套件並從 `data/Goose_S1_cleaned.ply` 範例檔案載入網格資料。
 **English Explanation**: Load the required packages and import the example mesh from `data/Goose_S1_cleaned.ply`.
-```{r library, include=FALSE}
+```{r library, eval=TRUE, echo=TRUE}
 # 載入套件 / Load packages
 library(habtools)
 library(rgl)
