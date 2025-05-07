@@ -15,19 +15,6 @@ meshes using the `habtools` package.
 範例檔案載入網格資料。 **English Explanation**: Load the required
 packages and import the example mesh from `data/Goose_S1_cleaned.ply`.
 
-``` r
-# 載入套件 / Load packages
-library(habtools)
-library(rgl)
-library(Rvcg)
-
-# 載入範例網格資料 / Load example mesh
-# 請確保檔案在專案的 data 資料夾中
-mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
-```
-
-    ## Removed 3 duplicate 1 unreferenced vertices and 0 duplicate faces
-
 ## 檢查網格 / Checking the Mesh
 
 在計算任何指標前，先視覺化網格並檢查 z 軸方向是否正確。 Before
@@ -35,7 +22,7 @@ calculating any metrics, visualize the mesh and ensure the z orientation
 is correct.
 
 ``` r
-# 顯示三維網格視覺化 / Visualize the 3D mesh
+# 繪製互動式 3D 模型 / Plot interactive 3D model
 plot3d(mesh)
 ```
 
@@ -308,3 +295,74 @@ list(
     ## 
     ## $mechanical_shape_factor
     ## [1] 3235.181
+
+## 轉換為 DEM 或 2D 形狀 / Transform mesh into a DEM or 2D shape
+
+``` r
+# 轉換為數字高程模型 / Convert mesh to DEM
+dem <- mesh_to_dem(mesh_uniform, res = 0.002, fill = FALSE)
+# 繪製 DEM / Plot DEM
+raster::plot(dem)
+```
+
+![](NSYSU_SfM_workshop_files/figure-gfm/mesh-to-dem-1.png)<!-- -->
+
+``` r
+# 在 DEM 上計算 Rugosity (area 方法) / Compute rugosity on DEM
+dem_rugosity <- rg(dem, method = "area")
+```
+
+    ## data contains 1842 NA values.
+
+    ## L0 is set to the resolution of the raster: 0.002.
+
+``` r
+print(dem_rugosity)
+```
+
+    ## [1] 2.737936
+
+``` r
+# 轉換為 2D 點集 / Convert mesh to 2D points
+pts <- mesh_to_2d(mesh_uniform)
+plot(pts, asp = 1, main = "2D Projection of Mesh")
+```
+
+![](NSYSU_SfM_workshop_files/figure-gfm/mesh-to-2d-1.png)<!-- -->
+
+``` r
+# 周長計算 / Compute perimeter
+perim_val <- perimeter(pts)
+# 圓形度計算 / Compute circularity
+circ_val <- circularity(pts)
+
+# 2D 分形維度 (boxes 方法) / Compute fractal dimension in 2D
+fd2d <- fd(pts, method = "boxes", keep_data = FALSE, plot = TRUE)
+```
+
+![](NSYSU_SfM_workshop_files/figure-gfm/mesh-to-2d-2.png)<!-- -->
+
+``` r
+# 顯示結果 / Print results
+list(
+  perimeter = perim_val,
+  circularity = circ_val,
+  fractal_dimension_2d = fd2d
+)
+```
+
+    ## $perimeter
+    ## [1] 0.8570739
+    ## 
+    ## $circularity
+    ## [1] 0.7448982
+    ## 
+    ## $fractal_dimension_2d
+    ## [1] 1.222986
+
+## 參考文獻 / References
+
+- Zawada KJA, Dornelas M, Madin JS (2019) Quantifying coral morphology.
+  *Coral Reefs*, **38**:1281–1292.
+- Madin JS & Connolly SR (2006) Ecological consequences of major
+  hydrodynamic disturbances on coral reefs. *Nature*, **444**:477–480.

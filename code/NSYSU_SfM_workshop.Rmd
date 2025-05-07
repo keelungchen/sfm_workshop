@@ -19,7 +19,7 @@ This tutorial demonstrates how to compute complexity metrics for 3D meshes using
 
 **中文說明**：載入必要的套件並從 `data/Goose_S1_cleaned.ply` 範例檔案載入網格資料。
 **English Explanation**: Load the required packages and import the example mesh from `data/Goose_S1_cleaned.ply`.
-```{r}
+```{r library, include=FALSE}
 # 載入套件 / Load packages
 library(habtools)
 library(rgl)
@@ -37,8 +37,9 @@ mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
 Before calculating any metrics, visualize the mesh and ensure the z orientation is correct.
 
 ```{r check-mesh, echo=TRUE}
-# 顯示三維網格視覺化 / Visualize the 3D mesh
+# 繪製互動式 3D 模型 / Plot interactive 3D model
 plot3d(mesh)
+
 ```
 
 ## 解析度分佈 / Resolution Distribution
@@ -186,5 +187,43 @@ list(
 )
 ```
 
+## 轉換為 DEM 或 2D 形狀 / Transform mesh into a DEM or 2D shape
+
+```{r mesh-to-dem, echo=TRUE}
+# 轉換為數字高程模型 / Convert mesh to DEM
+dem <- mesh_to_dem(mesh_uniform, res = 0.002, fill = FALSE)
+# 繪製 DEM / Plot DEM
+raster::plot(dem)
+
+# 在 DEM 上計算 Rugosity (area 方法) / Compute rugosity on DEM
+dem_rugosity <- rg(dem, method = "area")
+print(dem_rugosity)
+```
+
+```{r mesh-to-2d, echo=TRUE}
+# 轉換為 2D 點集 / Convert mesh to 2D points
+pts <- mesh_to_2d(mesh_uniform)
+plot(pts, asp = 1, main = "2D Projection of Mesh")
+
+# 周長計算 / Compute perimeter
+perim_val <- perimeter(pts)
+# 圓形度計算 / Compute circularity
+circ_val <- circularity(pts)
+
+# 2D 分形維度 (boxes 方法) / Compute fractal dimension in 2D
+fd2d <- fd(pts, method = "boxes", keep_data = FALSE, plot = TRUE)
+
+# 顯示結果 / Print results
+list(
+  perimeter = perim_val,
+  circularity = circ_val,
+  fractal_dimension_2d = fd2d
+)
+```
+
+## 參考文獻 / References
+
+* Zawada KJA, Dornelas M, Madin JS (2019) Quantifying coral morphology. *Coral Reefs*, **38**:1281–1292.
+* Madin JS & Connolly SR (2006) Ecological consequences of major hydrodynamic disturbances on coral reefs. *Nature*, **444**:477–480.
 
 
