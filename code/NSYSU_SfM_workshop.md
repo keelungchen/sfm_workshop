@@ -21,7 +21,12 @@ packages and import the example mesh from `data/Goose_S1_cleaned.ply`.
 calculating any metrics, visualize the mesh and ensure the z orientation
 is correct.
 
-![](data/mesh.png)
+``` r
+# 繪製 3D 網格 / Plot 3D mesh
+plot3d(mesh)
+```
+
+![](data/mesh.png)<!-- -->
 
 ## 解析度分佈 / Resolution Distribution
 

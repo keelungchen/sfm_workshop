@@ -36,11 +36,11 @@ mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
 在計算任何指標前，先視覺化網格並檢查 z 軸方向是否正確。
 Before calculating any metrics, visualize the mesh and ensure the z orientation is correct.
 
-```{r check-mesh, echo=FALSE}
+```{r check-mesh, eval=FALSE, echo=TRUE}
 # 繪製 3D 網格 / Plot 3D mesh
 plot3d(mesh)
 ```
-![](data/mesh.png)
+![](data/mesh.png)<!-- -->
 
 ## 解析度分佈 / Resolution Distribution
 
