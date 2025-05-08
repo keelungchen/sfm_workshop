@@ -55,6 +55,14 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 
 ---
 
+### 非必要但值得下載嘗試 / Optional but Recommended Software
+
+* [Meshlab](https://www.meshlab.net/) — 一款開源 3D 網格處理工具，可用於檢視、編輯與優化 3D 網格模型 / An open-source 3D mesh processing tool for viewing, editing, and optimizing 3D mesh models.
+
+* [CloudCompare](https://www.danielgm.net/cc/) — 一個點雲與網格比較與處理軟體，可用於點雲配準、濾波與分析 / A point cloud and mesh processing software for registration, filtering, and analysis.
+
+---
+
 ## 簡易 R 操作指南 / Quick R Usage Guide
 
 1. 開啟 RStudio / Open RStudio
