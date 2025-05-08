@@ -45,6 +45,10 @@ is correct.
 ``` r
 # 繪製 3D 網格 / Plot 3D mesh
 plot3d(mesh)
+
+# 若XYZ軸數值太奇怪 可重新設置中心 / If XYZ values are too weird, reset the center
+#mesh2 <- set_origin(mesh)
+#plot3d(mesh2)
 ```
 
 <figure>
@@ -118,6 +122,26 @@ summary(new_res)
     ##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
     ## 0.0003464 0.0011435 0.0014429 0.0014209 0.0017290 0.0028366
 
+## 視覺化驗證解析度分佈 / Visualize Resolution Distribution
+
+``` r
+# 將網格轉換為三維點雲 / Transform mesh to 3D point cloud
+mesh_p <- mesh_to_points(mesh)
+#plot3d(mesh_p)
+mesh_pu <- mesh_to_points(mesh_uniform) 
+#plot3d(mesh_pu)
+```
+
+<figure>
+<img src="../data/pointcloud_non-uniformed.png" alt="non-uniformed" />
+<figcaption aria-hidden="true">non-uniformed</figcaption>
+</figure>
+
+<figure>
+<img src="../data/pointcloud_uniformed.png" alt="uniformed" />
+<figcaption aria-hidden="true">uniformed</figcaption>
+</figure>
+
 ## 體積與表面積 / Volume and Surface Area
 
 **中文說明**：計算 mesh 的體積與總表面積。  
@@ -145,6 +169,21 @@ list(
     ## 
     ## $surface_area
     ## [1] 0.1404026
+
+## 平面面積 / Planar Area
+
+``` r
+# 平面表面積 / Planar surface area
+planar_area <- planar(mesh)
+```
+
+    ## L0 is set to mesh resolution (0.00152754054666314)
+
+``` r
+print(planar_area)
+```
+
+    ## [1] 0.03242759
 
 ## 複雜度指標：Rugosity (R), Fractal Dimension (D), Height Range (H)
 
@@ -197,29 +236,6 @@ print(height_range)
 ```
 
     ## [1] 0.2637615
-
-## 平面與表面積 / Planar and Surface Area
-
-``` r
-# 平面表面積 / Planar surface area
-planar_area <- planar(mesh)
-```
-
-    ## L0 is set to mesh resolution (0.00152754054666314)
-
-``` r
-print(planar_area)
-```
-
-    ## [1] 0.03242759
-
-``` r
-# 總表面積 / Total surface area
-surface_area_value <- surface_area(mesh)
-print(surface_area_value)
-```
-
-    ## [1] 0.1404026
 
 ## 形狀指標 / Shape Metrics
 

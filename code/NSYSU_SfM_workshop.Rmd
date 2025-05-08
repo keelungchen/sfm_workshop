@@ -42,6 +42,10 @@ Before calculating any metrics, visualize the mesh and ensure the z orientation 
 ```{r check-mesh, eval=FALSE, echo=TRUE}
 # 繪製 3D 網格 / Plot 3D mesh
 plot3d(mesh)
+
+# 若XYZ軸數值太奇怪 可重新設置中心 / If XYZ values are too weird, reset the center
+#mesh2 <- set_origin(mesh)
+#plot3d(mesh2)
 ```
 ![Fig0](../data/mesh.png)
 
@@ -85,6 +89,20 @@ hist(new_res, main = "Resolution Distribution", xlab = "Distance between vertice
 summary(new_res)
 ```
 
+## 視覺化驗證解析度分佈 / Visualize Resolution Distribution
+
+```{r}
+# 將網格轉換為三維點雲 / Transform mesh to 3D point cloud
+mesh_p <- mesh_to_points(mesh)
+#plot3d(mesh_p)
+mesh_pu <- mesh_to_points(mesh_uniform) 
+#plot3d(mesh_pu)
+```
+
+![non-uniformed](../data/pointcloud_non-uniformed.png)
+
+![uniformed](../data/pointcloud_uniformed.png)
+
 ## 體積與表面積 / Volume and Surface Area
 
 **中文說明**：計算 mesh 的體積與總表面積。  
@@ -105,6 +123,15 @@ list(
   surface_area = mesh_surface
 )
 ```
+
+## 平面面積 / Planar Area
+
+```{r area-metrics, echo=TRUE}
+# 平面表面積 / Planar surface area
+planar_area <- planar(mesh)
+print(planar_area)
+```
+
 
 ## 複雜度指標：Rugosity (R), Fractal Dimension (D), Height Range (H)
 
@@ -135,18 +162,6 @@ print(rugosity_value)
 # 計算高度範圍 / Compute height range
 height_range <- hr(mesh_uniform)
 print(height_range)
-```
-
-## 平面與表面積 / Planar and Surface Area
-
-```{r area-metrics, echo=TRUE}
-# 平面表面積 / Planar surface area
-planar_area <- planar(mesh)
-print(planar_area)
-
-# 總表面積 / Total surface area
-surface_area_value <- surface_area(mesh)
-print(surface_area_value)
 ```
 
 ## 形狀指標 / Shape Metrics
