@@ -55,6 +55,13 @@ plot(dem)
 points(lon, lat)
 ```
 
+# 或是用內建函式找中心點 / Or using build-in funciton to find center stake
+
+```{r}
+mid_find(dem)
+```
+
+
 # 重投影 DEM / Re-project DEM
 
 ```{r}
