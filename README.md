@@ -41,7 +41,7 @@
 ## 需要先下載的軟體 / Required Software
 
 * [Metashape Professional 2.1.4](https://www.agisoft.com/downloads/installer/)
-* [R & RStudio](https://cran.r-project.org/)
+* [R](https://cran.r-project.org/) & [RStudio]([https://cran.r-project.org/](https://posit.co/download/rstudio-desktop/)
 
   * Windows 使用者請同時 [下載並安裝 Rtools](https://cran.r-project.org/bin/windows/Rtools/)
 * 安裝以下 R 套件 / Install the following R packages:
