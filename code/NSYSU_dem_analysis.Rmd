@@ -80,6 +80,12 @@ writeRaster(
 dem2 <- raster("./output/IL_P4_2205_DEM-reproj.tif")
 ```
 
+# 計算平均深度 / Calculate mean depth
+
+```{r}
+z(dem2)
+```
+
 # 裁切 5×5 m 方塊 / Crop 5×5 m Square
 
 ```{r}
