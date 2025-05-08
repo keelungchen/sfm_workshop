@@ -61,6 +61,11 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 2. 在 Console 輸入 `install.packages(...)` 安裝套件
 3. 使用 `library(habtools)` 等命令載入套件 / Load packages with `library()`
 
+### 相關學習資源 / Learning Resources
+
+* [R Cheat Sheet](https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf) — 一頁式 R 基本語法速查表 / One-page R syntax cheat sheet
+* [R Tutorial for Beginners](https://www.w3schools.com/r/default.asp) — 入門線上教學資源 / Online beginner tutorial
+
 ---
 
 ## 下載與執行 / Download & Setup
