@@ -15,6 +15,9 @@ knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 本教學示範如何使用 `habtools` 套件計算三維網格 (3D mesh) 的複雜度指標。
 This tutorial demonstrates how to compute complexity metrics for 3D meshes using the `habtools` package.
 
+Google Sheet 表單：https://docs.google.com/spreadsheets/d/1bzkbs_vZW_oL9Juc1XiOjf3hgM3Hb-XQDLEPVxPApyg/edit?usp=sharing
+此表單用於記錄每位參與者所帶來最喜愛物品的 3D 模型之各項結構複雜度指標，我們將比較不同物體的數值，以探討各項複雜度指標的意義。This spreadsheet records the complexity metrics of 3D models of each participant's favorite objects. We will compare values across different objects to explore the meaning of each complexity metric.
+
 ## 前置作業與資料載入 / Setup and Data Loading
 
 **中文說明**：載入必要的套件並從 `data/Goose_S1_cleaned.ply` 範例檔案載入網格資料。
