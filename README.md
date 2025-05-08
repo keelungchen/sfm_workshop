@@ -63,19 +63,30 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 
 ---
 
-## 下載與執行 / Clone & Setup
+## 下載與執行 / Download & Setup
 
-* 將此專案下載到本機 / Download this project to your computer:
+* 在 GitHub 專案頁面點擊 **Code** → **Download ZIP**
+  On the GitHub repo page, click **Code** → **Download ZIP**
 
-  ```bash
-  git clone https://github.com/您的帳號/您的專案.git
-  cd 您的專案
-  ```
-* DAY2 R 分析前，請先在 `code/` 資料夾中開啟並測試以下檔案是否可運行 / Before Day 2 R analysis, please open and test the following files in the `code/` directory:
+* 將下載的 ZIP 檔解壓縮到您想存放的資料夾
+  Unzip the downloaded archive to your desired folder
+
+* 開啟 RStudio，選擇 **File** → **Open Project** 或 **Open Directory**，導覽至剛剛解壓縮的專案資料夾並打開
+  In RStudio, use **File** → **Open Project** or **Open Directory**, then navigate to and open the unzipped project folder
+
+* 設定工作目錄：在 RStudio Console 中輸入 `setwd("/path/to/your/project")`，或使用 RStudio 上方選單 **Session** → **Set Working Directory** → **To Project Directory**
+  Set the working directory by running `setwd("/path/to/your/project")` in the Console, or via **Session** → **Set Working Directory** → **To Project Directory**
+
+* Day 2 的 R 分析前，請先在 `code/` 資料夾中開啟並測試以下檔案是否可以正常執行：
+  Before Day 2 R analysis, please open and test the following files in the `code/` directory:
 
   * `NSYSU_SfM_workshop.Rmd`
   * `NSYSU_dem_analysis.Rmd`
-* 如有軟體安裝問題，我將於工作坊開始前 30 分鐘抵達現場協助解決 / If you encounter any software installation issues, I will arrive 30 minutes before the workshop to assist.
+
+* 如有軟體安裝或環境設定問題，我將於工作坊開始前 30 分鐘抵達現場協助解決
+  If you encounter any software installation or environment setup issues, I will arrive 30 minutes before the workshop to assist.
+
+
 
 ---
 
