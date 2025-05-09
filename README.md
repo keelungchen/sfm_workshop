@@ -15,9 +15,9 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 | 2:00–2:20 PM | 開場：為何需要 3D 調查、SfM 原理簡介 / Introduction: Why 3D Survey & SfM Basics                 |
 | 2:20–2:50 PM | 群體尺度拍攝方式說明與調查練習 / Colony-Scale Survey Tutorial                       |
 | 3:00–3:30 PM | 棲地尺度拍攝方式說明與調查練習 / Habitat-Scale Survey Tutorial                         |
-| 3:30–4:20 PM | [Metashape 軟體操作](docs/NSYSU-MetashapeSOP-2505.pdf) / Metashape Software Demo                            |
-| 4:20–4:40 PM | 簡易 3D 模型動畫與輸出展示 / Simple 3D Model Export & Visualization                     |
-| 4:40–4:55 PM | 小結與方法設備差異討論、相關資源分享 / Summary & Discussion                                                              |
+| 3:30–4:30 PM | [Metashape 軟體操作](docs/NSYSU-MetashapeSOP-2505.pdf) / Metashape Software Demo                            |
+| 4:30–4:45 PM | 簡易 3D 模型動畫與輸出展示 / Simple 3D Model Export & Visualization                     |
+| 4:45–4:55 PM | 小結與方法設備差異討論、相關資源分享 / Summary & Discussion                                                              |
 | 4:55–5:00 PM | Q\&A                                                                                                   |
 | **Day 2**    |                                                                                                        |
 | 2:00–2:20 PM | 如何分析 3D 調查結果、實際應用案例分享 / Analyzing 3D Survey Data & Case Studies       |
