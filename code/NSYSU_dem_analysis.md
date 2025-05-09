@@ -74,6 +74,12 @@ plot(dem) # 繪製 DEM / plot the DEM
 ``` r
 # 1. 用 brick() 直接讀入多波段
 ortho <- brick("./data/IL_P4_2205_5mm.tif")
+```
+
+    ## Warning: [minmax] min and max values not available for all layers. See
+    ## 'setMinMax' or 'global'
+
+``` r
 # 2. 檢查物件類型，應該是 RasterBrick
 ortho
 ```
@@ -111,6 +117,15 @@ points(lon, lat)
 
 ![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
+# 或是用內建函式找中心點 / Or using build-in funciton to find center stake
+
+``` r
+mid_find(dem)
+```
+
+    ##      x_mid    y_mid
+    ## 1 120.7553 21.95621
+
 # 重投影 DEM / Re-project DEM
 
 ``` r
@@ -125,7 +140,7 @@ plot(dem2)
 points(0, 0)
 ```
 
-![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # 儲存重投影結果 / Save Re-projection
 
@@ -138,6 +153,14 @@ writeRaster(
 dem2 <- raster("./output/IL_P4_2205_DEM-reproj.tif")
 ```
 
+# 計算平均深度 / Calculate mean depth
+
+``` r
+z(dem2)
+```
+
+    ## [1] -1.168177
+
 # 裁切 5×5 m 方塊 / Crop 5×5 m Square
 
 ``` r
@@ -145,12 +168,12 @@ dem_square <- crop(dem2, raster::extent(-2.5, 2.5, -2.5, 2.5))
 plot(dem_square)
 ```
 
-![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
-# 計算表面積 / Calculate Surface Area
+# 計算每平方公尺表面積 / Calculate Surface Area per square meter
 
 ``` r
-surface_area(dem_square) / 25 # 除以平面面積 5×5
+surface_area(dem_square) / 25 # 除以平面面積 5×5, divide by planar area
 ```
 
     ## [1] 2.614636
@@ -161,7 +184,7 @@ surface_area(dem_square) / 25 # 除以平面面積 5×5
 dem3 <- dem_crop(dem_square, x0 = -1, y0 = 0.5, L = 2, plot = TRUE)
 ```
 
-![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 # 或用 dem_sample 隨機取樣
@@ -186,7 +209,7 @@ rg(dem3, method = "area", L0 = 0.01) # Rugosity 計算 / surface roughness
 fd(dem3, method = "hvar", lvec = c(0.25, 0.5, 1, 2), plot = TRUE, diagnose = TRUE)
 ```
 
-![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-10-2.png)<!-- -->
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-12-2.png)<!-- -->
 
     ## $D
     ## [1] 2.425442
@@ -272,7 +295,7 @@ for(i in seq_len(nrow(rdh_df))) {
 }
 ```
 
-![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 # 匯入並顯示多邊形 / Import Polygons
 
@@ -304,11 +327,107 @@ coords <- st_coordinates(centroids)
 text(x = coords[,1], y = coords[,2], labels = shp_proj$ID, cex = 0.8, col = "blue")
 ```
 
-![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+# 畫出族群結構 / plot population structure
+
+``` r
+# clean colony ID = 9999 which means non-coral substrate in my dataset
+shp_proj$ID <- as.numeric(unlist(shp_proj$ID))
+shp_clean <- shp_proj %>% filter(ID != 9999)
+
+# 計算面積、周長與圓度 / Calculate area, perimeter and circularity
+metrics <- shp_clean %>%
+  mutate(
+    area       = as.numeric(st_area(geometry)),  
+    perimeter  = as.numeric(st_length(st_cast(geometry, "MULTILINESTRING"))),
+    circularity  = 4 * pi * area / perimeter^2,         # circularity = 4πA / P²
+    log_area   = log(area),                             # log 轉換尺寸
+    logit_circularity = log(circularity / (1 - circularity))  # logit 轉換圓度
+  )
+
+N <- nrow(metrics) # calculate sample size
+
+# 畫出族群尺寸組成（log 轉換後的 area）
+ggplot(metrics, aes(x = log_area)) +
+  geom_histogram(
+    binwidth = diff(range(metrics$log_area, na.rm=TRUE)) / 30, 
+    fill     = "steelblue", 
+    color    = "white"
+  ) +
+  labs(
+    x     = "Log(Area) (log m²)",
+    y     = "Count",
+    title = "Population Size Structure (log scale)"
+  ) +
+  annotate(
+    "text",
+    x     = Inf,       # 置於右上角
+    y     = Inf,
+    label = paste0("N = ", N),
+    hjust = 1.1,       # 向左一點
+    vjust = 1.1        # 向下一點
+  ) +
+  theme_minimal()
+```
+
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+# 畫出型態組成 / plot morphological composition
+
+``` r
+# 計算平均值做為分隔點 calculate mean for mid point on x y
+med_x <- mean(metrics$log_area, na.rm = TRUE)
+med_y <- mean(metrics$logit_circularity, na.rm = TRUE)
+
+# 計算四個象限的數量 calculate the amount in four quadrants
+n_Q1 <- sum(metrics$log_area >  med_x & metrics$logit_circularity >  med_y, na.rm = TRUE)  # 右上
+n_Q2 <- sum(metrics$log_area <= med_x & metrics$logit_circularity >  med_y, na.rm = TRUE)  # 左上
+n_Q3 <- sum(metrics$log_area <= med_x & metrics$logit_circularity <= med_y, na.rm = TRUE)  # 左下
+n_Q4 <- sum(metrics$log_area >  med_x & metrics$logit_circularity <= med_y, na.rm = TRUE)  # 右下
+
+# 計算圖形範圍以便標註文字位置
+x_min <- min(metrics$log_area, na.rm = TRUE)
+x_max <- max(metrics$log_area, na.rm = TRUE)
+y_min <- min(metrics$logit_circularity, na.rm = TRUE)
+y_max <- max(metrics$logit_circularity, na.rm = TRUE)
+
+# 構造標註資料框
+labels_df <- data.frame(
+  x = c((med_x + x_max)/2, (x_min + med_x)/2, (x_min + med_x)/2, (med_x + x_max)/2),
+  y = c((med_y + y_max)/2, (med_y + y_max)/2, (y_min + med_y)/2, (y_min + med_y)/2),
+  label = c(
+    paste0("Q1: ", n_Q1),
+    paste0("Q2: ", n_Q2),
+    paste0("Q3: ", n_Q3),
+    paste0("Q4: ", n_Q4)
+  )
+)
+
+# 繪製散點圖、畫中位線、標註象限數量
+ggplot(metrics, aes(x = log_area, y = logit_circularity)) +
+  geom_point(alpha = 0.7) +
+  geom_vline(xintercept = med_x, linetype = "dashed") +
+  geom_hline(yintercept = med_y, linetype = "dashed") +
+  geom_text(
+    data = labels_df,
+    aes(x = x, y = y, label = label),
+    size = 4, fontface = "bold", color = "darkred"
+  ) +
+  labs(
+    x = "Log(Area) (log m²)",
+    y = "Logit(circularity)",
+    title = "Morphological Composition with Mean Crosshairs and Quadrant Counts"
+  ) +
+  theme_minimal()
+```
+
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 # 過濾、計算 2D 與 3D 面積 / Filter and Compute 2D vs 3D Areas
 
 ``` r
+# filter the .shp files to faster the calculation speed
 shp_proj$ID <- as.numeric(unlist(shp_proj$ID))
 shp_clean <- shp_proj %>% filter(ID != 9999)
 qs <- quantile(shp_clean$Shape_Area, probs = c(0.5, 0.75), na.rm = TRUE)
@@ -330,6 +449,7 @@ results_list <- lapply(seq_len(nrow(shp_sub)), function(i) {
   data.frame(ID = poly_i$ID, area_2d_m2 = area_2d, surface_area_m2 = sa)
 })
 results_df <- bind_rows(results_list)
+
 plot(log(results_df$area_2d_m2), log(results_df$surface_area_m2),
      xlab = "log (2D projected area (m²))", ylab = "log (3D surface area (m²))",
      main = "2D vs. 3D Surface Area", pch = 16)
@@ -338,7 +458,7 @@ corr <- cor(log(results_df$area_2d_m2), log(results_df$surface_area_m2))
 legend("topleft", legend = paste0("Pearson r = ", round(corr, 3)), bty = "n", cex = 1.1)
 ```
 
-![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
 
 # 比較 T1 與 T+1 面積 / Compare T1 vs T+1 Areas
 
@@ -397,7 +517,7 @@ mod <- lm(area_t2 ~ area_t1, data = df)
 abline(mod, col = "red", lwd = 2)
 ```
 
-![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](NSYSU_dem_analysis_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 # 參考文獻 / References
 
@@ -405,3 +525,5 @@ abline(mod, col = "red", lwd = 2)
   complexity and biodiversity.* Nat Ecol Evol 4, 1495–1501 (2020).
 - Asbury, M. et al. *Geological age and environments shape reef habitat
   structure.* Global Ecol Biogeogr 32(7), 1230-1240 (2023).
+- Chen, G. K. et al. *Relative contributions of size and shape to coral
+  demography.* The American Naturalist, 205(6), 000-000 (2025).
