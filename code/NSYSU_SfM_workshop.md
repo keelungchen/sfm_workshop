@@ -28,7 +28,19 @@ packages and import the example mesh from `data/Goose_S1_cleaned.ply`.
 library(habtools)
 library(rgl)
 library(Rvcg)
+library(raster)
+```
 
+    ## Loading required package: sp
+
+    ## 
+    ## Attaching package: 'raster'
+
+    ## The following object is masked from 'package:habtools':
+    ## 
+    ##     extent
+
+``` r
 # 載入範例網格資料 / Load example mesh
 # 請確保檔案在專案的 data 資料夾中
 mesh <- vcgPlyRead("data/Goose_S1_cleaned.ply")
@@ -387,6 +399,34 @@ print(dem_rugosity)
 ```
 
     ## [1] 2.737936
+
+## 由DEM計算體積 / Calculate volume from DEM
+
+``` r
+# 1. 取得 DEM 的最低高度，作為參考面 / Get the DEM’s minimum elevation as the reference plane
+z_ref <- cellStats(dem, stat = 'min', na.rm = TRUE)
+
+# 2. 計算每個像素的水平面積 (m²) / Compute the area of each cell in m²
+cell_area <- prod(res(dem))
+
+# 3. 讀取所有像素高度值，並將 NA 設為參考面高度 / Retrieve all elevation values and replace NA with z_ref
+heights <- getValues(dem)
+heights[is.na(heights)] <- z_ref
+
+# 4. 計算體積：Σ((hᵢ − z_ref) × 面積) / Calculate volume: sum((h[i] – z_ref) * cell_area)
+volume_m3 <- sum((heights - z_ref) * cell_area)
+
+# 5. 輸出結果 / Print out the result
+cat(
+  "以 DEM 最低值", z_ref, "m 作為參考面，\n",
+  "Total volume above reference plane =", volume_m3, "m^3\n"
+)
+```
+
+    ## 以 DEM 最低值 -0.6109927 m 作為參考面，
+    ##  Total volume above reference plane = 0.004096159 m^3
+
+### 比較mesh與DEM體積的計算結果，為什麼會有差別? Compare the volume calculated from mesh and DEM, why there is a difference?
 
 ``` r
 # 轉換為 2D 點集 / Convert mesh to 2D points
