@@ -15,9 +15,9 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 | 2:00–2:20 PM | 開場：為何需要 3D 調查、SfM 原理簡介 / Introduction: Why 3D Survey & SfM Basics                 |
 | 2:20–2:50 PM | 群體尺度拍攝方式說明與調查練習 / Colony-Scale Survey Tutorial                       |
 | 3:00–3:30 PM | 棲地尺度拍攝方式說明與調查練習 / Habitat-Scale Survey Tutorial                         |
-| 3:30–4:20 PM | [Metashape 軟體操作](docs/NSYSU-MetashapeSOP-2505.pdf) / Metashape Software Demo                            |
-| 4:20–4:40 PM | 簡易 3D 模型動畫與輸出展示 / Simple 3D Model Export & Visualization                     |
-| 4:40–4:55 PM | 小結與方法設備差異討論、相關資源分享 / Summary & Discussion                                                              |
+| 3:30–4:30 PM | [Metashape 軟體操作](docs/NSYSU-MetashapeSOP-2505.pdf) / Metashape Software Demo                            |
+| 4:30–4:45 PM | 簡易 3D 模型動畫與輸出展示 / Simple 3D Model Export & Visualization                     |
+| 4:45–4:55 PM | 小結與方法設備差異討論、相關資源分享 / Summary & Discussion                                                              |
 | 4:55–5:00 PM | Q\&A                                                                                                   |
 | **Day 2**    |                                                                                                        |
 | 2:00–2:20 PM | 如何分析 3D 調查結果、實際應用案例分享 / Analyzing 3D Survey Data & Case Studies       |
@@ -73,6 +73,32 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 
 * [R Cheat Sheet](https://iqss.github.io/dss-workshops/R/Rintro/base-r-cheat-sheet.pdf) — 一頁式 R 基本語法速查表 / One-page R syntax cheat sheet
 * [R Tutorial for Beginners](https://www.w3schools.com/r/default.asp) — 入門線上教學資源 / Online beginner tutorial
+
+---
+
+## 簡易 QGIS 操作指南 / Quick QGIS Usage Guide
+
+[簡報slide](docs/NSYSU-QGIS-guide.pdf)
+
+1. 載入 Orthomosaic 與 DEM：
+
+   * 選擇「圖層」→「新增圖層」→「新增光柵圖層」，載入正射影像與 DEM 檔案
+     Add Orthomosaic & DEM:
+   * Layer → Add Layer → Add Raster Layer, then select your orthomosaic and DEM files.
+
+2. 創建 Polygon 進行珊瑚群體圈選：
+
+   * 使用「編輯圖層」工具啟用編輯，再選取「新增要素」，繪製多邊形圈選珊瑚群體
+     Create Polygons for Coral Selection:
+   * Toggle editing with the Toggle Editing tool, then use the Add Feature tool to draw polygons around coral colonies.
+
+3. 計算面積與邊長：
+
+   * 在圖層面板右鍵點選多邊形圖層 → 開啟屬性表 → 點擊「欄位計算器」
+   * 新增字段並使用運算符 `"$area"` 與 `"$perimeter"` 計算面積與周長
+     Calculate Area & Perimeter:
+   * Right-click your polygon layer in Layers panel → Open Attribute Table → Toggle Field Calculator
+   * Create new fields using expressions `"$area"` and `"$perimeter"` to compute metrics.
 
 ---
 
