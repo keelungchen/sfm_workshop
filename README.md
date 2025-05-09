@@ -76,6 +76,32 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 
 ---
 
+## 簡易 QGIS 操作指南 / Quick QGIS Usage Guide
+
+[簡報slide](docs/NSYSU-QGIS-guide.pdf)
+
+1. 載入 Orthomosaic 與 DEM：
+
+   * 選擇「圖層」→「新增圖層」→「新增光柵圖層」，載入正射影像與 DEM 檔案
+     Add Orthomosaic & DEM:
+   * Layer → Add Layer → Add Raster Layer, then select your orthomosaic and DEM files.
+
+2. 創建 Polygon 進行珊瑚群體圈選：
+
+   * 使用「編輯圖層」工具啟用編輯，再選取「新增要素」，繪製多邊形圈選珊瑚群體
+     Create Polygons for Coral Selection:
+   * Toggle editing with the Toggle Editing tool, then use the Add Feature tool to draw polygons around coral colonies.
+
+3. 計算面積與邊長：
+
+   * 在圖層面板右鍵點選多邊形圖層 → 開啟屬性表 → 點擊「欄位計算器」
+   * 新增字段並使用運算符 `"$area"` 與 `"$perimeter"` 計算面積與周長
+     Calculate Area & Perimeter:
+   * Right-click your polygon layer in Layers panel → Open Attribute Table → Toggle Field Calculator
+   * Create new fields using expressions `"$area"` and `"$perimeter"` to compute metrics.
+
+---
+
 ## 下載與執行 / Download & Setup
 
 * 在 GitHub 專案頁面點擊 **Code** → **Download ZIP**
