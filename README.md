@@ -53,8 +53,6 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 * [QGIS](https://qgis.org/en/site/forusers/download.html)
 * [Sketchfab 帳號註冊 / Sign up for Sketchfab](https://sketchfab.com/signup)
 
----
-
 ### 非必要但值得下載嘗試 / Optional but Recommended Software
 
 * [Meshlab](https://www.meshlab.net/) — 一款開源 3D 網格處理工具，可用於檢視、編輯與優化 3D 網格模型 / An open-source 3D mesh processing tool for viewing, editing, and optimizing 3D mesh models.
