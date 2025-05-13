@@ -63,6 +63,14 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 
 ---
 
+### 課程簡報 / Course slides
+
+* 第一天 / [Day 1](docs/DAY1-3Dreef_survey_intro.pdf) - Intro to 3D Coral Reef Survey
+
+* 第二天 / Day 2 - 3D Analysis and Case Studies
+
+---
+
 ## 簡易 R 操作指南 / Quick R Usage Guide
 
 1. 開啟 RStudio / Open RStudio
