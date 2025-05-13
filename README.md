@@ -25,7 +25,7 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 | 3:00–3:10 PM | Metashape 完善群體尺度模型 / Improving Colony-Scale Model                   |
 | 3:10–3:50 PM | [R 語言群體尺度複雜度分析](code/NSYSU_SfM_workshop.md) / R-Based Colony-Scale Analysis                     |
 | 4:00–4:40 PM | [R + QGIS 棲地尺度複雜度分析](code/NSYSU_dem_analysis.md) / R + QGIS Habitat-Scale Analysis                 |
-| 4:40–4:55 PM | 進階分析方法分享 / Advanced Analysis Methods                                                                   |
+| 4:40–4:55 PM | 進階分析方法分享、挑戰與願景 / Advanced Analysis Methods, challenges and future                                                                   |
 | 4:55–5:00 PM | Q\&A                                                                                                   |
 
 ---
