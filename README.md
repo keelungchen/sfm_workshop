@@ -108,7 +108,7 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 
 ---
 
-## 下載與執行 / Download & Setup
+## 給初次github使用者的指引 / Download & Setup guide for github beginner
 
 * 在 GitHub 專案頁面點擊 **Code** → **Download ZIP**
   On the GitHub repo page, click **Code** → **Download ZIP**
