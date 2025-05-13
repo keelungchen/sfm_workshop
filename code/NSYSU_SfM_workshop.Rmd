@@ -263,6 +263,8 @@ cat(
 
 ### 比較mesh與DEM體積的計算結果，為什麼會有差別? Compare the volume calculated from mesh and DEM, why there is a difference?
 
+## 計算3D模型的2D投影型態複雜度 / Calculate the 2D projetion morphological metrics from 3D model
+
 ```{r mesh-to-2d, echo=TRUE}
 # 轉換為 2D 點集 / Convert mesh to 2D points
 pts <- mesh_to_2d(mesh_uniform)
