@@ -63,7 +63,7 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 
 ---
 
-### 課程簡報 / Course slides
+## 課程簡報 / Course slides
 
 * 第一天 / [Day 1](docs/DAY1-3Dreef_survey_intro.pdf) - Intro to 3D Coral Reef Survey
 
