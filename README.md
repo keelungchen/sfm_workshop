@@ -100,7 +100,7 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 
 3. 計算面積與邊長：
 
-   * 在圖層面板右鍵點選polygon layer → 開啟attribute table → 點擊「Field Calculator」
+   * 在圖層面板右鍵點選多邊形圖層 → 開啟屬性表 → 點擊「Field Calculator」
    * 新增字段並使用運算符 `"$area"` 與 `"$perimeter"` 計算面積與周長
      Calculate Area & Perimeter:
    * Right-click your polygon layer in Layers panel → Open Attribute Table → Toggle Field Calculator
