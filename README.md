@@ -42,7 +42,7 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 ## 需要先下載的軟體 / Required Software
 
 * [Metashape Professional 2.1.4](https://www.agisoft.com/downloads/installer/)
-* [R & RStudio](https://posit.co/download/rstudio-desktop/)
+* [R & RStudio](https://posit.co/download/rstudio-desktop/) 確保R的版本為最新的4.5.0, Make sure R version is the newest 4.5.0
 
   * Windows 使用者請同時 [下載並安裝 Rtools](https://cran.r-project.org/bin/windows/Rtools/)
 * 安裝以下 R 套件 / Install the following R packages:
