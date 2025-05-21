@@ -45,12 +45,12 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
 * [R & RStudio](https://posit.co/download/rstudio-desktop/) 確保R的版本為最新的 4.5.0 / Make sure R version is the newest 4.5.0
 
   * Windows 使用者請同時 [下載並安裝 Rtools](https://cran.r-project.org/bin/windows/Rtools/)
-* 安裝以下 R 套件 / Install the following R packages:
+  安裝以下 R 套件 / Install the following R packages:
 
   ```r
   install.packages(c("habtools", "rgl", "Rvcg", "raster", "sf", "dplyr", "ggplot2"))
   ```
-* ⚠️工作坊開始前確保可以運行以下程式碼 / before workshop, make sure you can run the code below
+  ⚠️工作坊開始前確保可以運行以下程式碼 / before workshop, make sure you can run the code below
   ```r
   # 載入套件 / Load packages
   library(habtools)
