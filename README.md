@@ -49,7 +49,7 @@ This project is a hands-on workshop focused on Structure-from-Motion (SfM) 3D su
   ```r
   install.packages(c("habtools", "rgl", "Rvcg", "raster", "sf", "dplyr", "ggplot2"))
   ```
-* Windows 使用者請同時 [下載並安裝 Rtools](https://cran.r-project.org/bin/windows/Rtools/)
+* Windows 使用者請同時 [下載並安裝 Rtools](https://cran.r-project.org/bin/windows/Rtools/) / Windows user need to install Rtools
   
   ⚠️工作坊開始前確保可以運行以下程式碼 / before workshop, make sure you can run the code below
   ```r
